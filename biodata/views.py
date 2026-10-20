@@ -20,7 +20,7 @@ KEY_WHERE = "COMP_ID = :c AND SITE_ID = :s AND EMPCODE = :e"
 def home(request):
     return render(request, 'biodata/home.html')
 
-
+# Lihat Data
 @login_required
 def biodata_list(request):
     q = request.GET.get('q', '').strip()
@@ -55,7 +55,7 @@ def biodata_list(request):
         'columns': LIST_COLUMNS,
     })
 
-
+# Lihat Data secara keseluruhan
 @login_required
 def biodata_detail(request):
     binds = {'c': request.GET.get('comp', ''),
@@ -84,7 +84,7 @@ def biodata_detail(request):
         'name': row['EMPNAME'], 'code': row['EMPCODE'],
     })
 
-
+# kolom kosong menghasilkan error hanya jika wajib
 def _parse(field, raw):
     """Kembalikan (nilai_untuk_oracle, pesan_error)."""
     col, label, tipe, length, required = field
@@ -105,7 +105,7 @@ def _parse(field, raw):
         return None, f'Maksimal {length} karakter'
     return raw, None
 
-
+# menyiapkan data untuk template
 def _form_sections(raw_values, errors):
     return [
         {'title': title, 'fields': [
@@ -116,7 +116,7 @@ def _form_sections(raw_values, errors):
         for title, fields in SECTIONS
     ]
 
-
+# Tambah Data biodata
 @login_required
 def biodata_create(request):
     raw_values, errors = {}, {}

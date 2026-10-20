@@ -1,4 +1,4 @@
-# """Koneksi dan query ke Oracle (SQL langsung, tanpa ORM Django)."""
+# Koneksi dan query ke Oracle (SQL langsung, tanpa ORM Django).
 import os
 import re
 from contextlib import contextmanager
@@ -10,14 +10,14 @@ load_dotenv()
 
 _initialized = False
 
-
+# memuat Instant Client sekali saja. Oracle mengharuskan pemanggilan ini tidak boleh dua kali.
 def _init_client():
     global _initialized
     if not _initialized:
         cx_Oracle.init_oracle_client(lib_dir=os.environ["ORA_CLIENT_DIR"])
         _initialized = True
 
-
+# membaca nama tabel dari .env. Regex memastikan isinya hanya huruf, angka, dan karakter yang sah. Nama tabel disisipkan langsung ke SQL (tidak bisa memakai bind variable), jadi ini perlu dijaga.
 def _table_name():
     name = os.getenv("ORA_TABLE", "EMPMASTEREPMS")
     schema = os.getenv("ORA_SCHEMA", "")
@@ -29,7 +29,7 @@ def _table_name():
 
 TABLE = _table_name()
 
-
+# membuka koneksi lalu menutupnya otomatis (finally), walaupun terjadi error. Setiap permintaan halaman membuka koneksi baru. Ini sederhana dan cukup untuk pemakaian internal. Kalau nanti pengguna banyak, bisa diganti connection pool.
 @contextmanager
 def get_connection():
     _init_client()

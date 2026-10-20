@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Tambah Biodata{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">Tambah Biodata</h4>
+    <a href="{% url 'biodata:list' %}" class="btn btn-outline-secondary btn-sm">&laquo; Kembali</a>
+</div>
+
+<form method="post" novalidate>
+    {% csrf_token %}
+    {% for sec in sections %}
+    <div class="card mb-3">
+        <div class="card-header fw-bold">{{ sec.title }}</div>
+        <div class="card-body">
+            <div class="row g-3">
+            {% for f in sec.fields %}
+                <div class="{% if f.type == 'textarea' %}col-12{% else %}col-md-4{% endif %}">
+                    <label class="form-label small mb-1">{{ f.label }}{% if f.req %} <span class="text-danger">*</span>{% endif %}</label>
+                    {% if f.type == 'textarea' %}
+                        <textarea name="{{ f.name }}" rows="3" maxlength="{{ f.length }}"
+                                  class="form-control {% if f.error %}is-invalid{% endif %}">{{ f.value }}</textarea>
+                    {% elif f.type == 'date' %}
+                        <input type="date" name="{{ f.name }}" value="{{ f.value }}"
+                               class="form-control {% if f.error %}is-invalid{% endif %}">
+                    {% elif f.type == 'number' %}
+                        <input type="number" step="any" name="{{ f.name }}" value="{{ f.value }}"
+                               class="form-control {% if f.error %}is-invalid{% endif %}">
+                    {% else %}
+                        <input type="text" name="{{ f.name }}" value="{{ f.value }}" maxlength="{{ f.length }}"
+                               class="form-control {% if f.error %}is-invalid{% endif %}">
+                    {% endif %}
+                    {% if f.error %}<div class="invalid-feedback d-block">{{ f.error }}</div>{% endif %}
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <div class="mb-5">
+        <button type="submit" class="btn btn-primary">Simpan</button>
+        <a href="{% url 'biodata:list' %}" class="btn btn-link">Batal</a>
+    </div>
+</form>
+{% endblock %}

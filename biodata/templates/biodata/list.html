@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Biodata{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">Biodata Pekerja <small class="text-muted fs-6">({{ total }} data)</small></h4>
+    <a href="{% url 'biodata:create' %}" class="btn btn-primary btn-sm">+ Tambah</a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Cari kode atau nama pekerja">
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-outline-secondary" type="submit">Cari</button>
+        {% if q %}<a href="{% url 'biodata:list' %}" class="btn btn-link">Reset</a>{% endif %}
+    </div>
+</form>
+
+<div class="table-responsive">
+<table class="table table-sm table-striped table-hover bg-white align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>Perusahaan</th><th>Site</th><th>Kode</th><th>Nama</th>
+            <th>Department</th><th>Status</th><th>Aktif</th><th></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for r in rows %}
+        <tr>
+            <td>{{ r.COMP_ID }}</td>
+            <td>{{ r.SITE_ID }}</td>
+            <td>{{ r.EMPCODE }}</td>
+            <td>{{ r.EMPNAME|default_if_none:"" }}</td>
+            <td>{{ r.DEPARTMENTCODE|default_if_none:"" }}</td>
+            <td>{{ r.EMPSTATUS|default_if_none:"" }}</td>
+            <td>{{ r.ACTIVE|default_if_none:"" }}</td>
+            <td class="text-end">
+                <a class="btn btn-outline-primary btn-sm"
+                   href="{% url 'biodata:detail' %}?comp={{ r.COMP_ID|urlencode }}&site={{ r.SITE_ID|urlencode }}&code={{ r.EMPCODE|urlencode }}">Lihat</a>
+            </td>
+        </tr>
+    {% empty %}
+        <tr><td colspan="8" class="text-center text-muted py-4">Tidak ada data.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+
+<nav class="d-flex justify-content-between align-items-center">
+    <span class="text-muted small">Halaman {{ page }} dari {{ pages }}</span>
+    <div>
+        {% if page > 1 %}<a class="btn btn-outline-secondary btn-sm" href="?q={{ q|urlencode }}&page={{ prev }}">&laquo; Sebelumnya</a>{% endif %}
+        {% if page < pages %}<a class="btn btn-outline-secondary btn-sm" href="?q={{ q|urlencode }}&page={{ next }}">Berikutnya &raquo;</a>{% endif %}
+    </div>
+</nav>
+{% endblock %}

@@ -6,6 +6,11 @@
     <a href="{% url 'biodata:list' %}" class="btn btn-outline-secondary btn-sm">&laquo; Kembali</a>
 </div>
 
+<div class="alert alert-info py-2">
+    Data akan disimpan untuk <b>{{ request.session.comp_name|default:request.session.comp_id }}</b>
+    / <b>{{ request.session.site_name|default:request.session.site_id }}</b>.
+</div>
+
 <form method="post" novalidate>
     {% csrf_token %}
     {% for sec in sections %}

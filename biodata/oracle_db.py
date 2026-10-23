@@ -26,8 +26,16 @@ def _table_name():
         raise ValueError("Nama tabel/schema di .env tidak valid")
     return full
 
-
 TABLE = _table_name()
+
+def _view_name():
+    name = (os.getenv("ORA_VIEW_COMPSITE") or "VW_REF_COMPSITE").strip()
+    if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_$#]*(\.[A-Za-z][A-Za-z0-9_$#])?", name):
+        raise ValueError(f"Nama View di .env tidak valdi: {name!r}")
+    return name
+
+VIEW_COMPSITE = _view_name()
+    
 
 # membuka koneksi lalu menutupnya otomatis (finally), walaupun terjadi error. Setiap permintaan halaman membuka koneksi baru. Ini sederhana dan cukup untuk pemakaian internal. Kalau nanti pengguna banyak, bisa diganti connection pool.
 @contextmanager

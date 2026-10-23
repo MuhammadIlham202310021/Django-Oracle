@@ -40,7 +40,10 @@
     <!-- SIDEBAR -->
     <aside id="sidebar">
         <div class="brand">Sistem Data Pekerja</div>
-        <div class="user"><p class="mb-0">User: {{ user.username }}</p></div>
+        <div class="user">
+            <p class="mb-1">User: {{ user.username }}</p>
+            <p class="mb-0 small text-info">{{ request.session.comp_name|default:request.session.comp_id }}<br>{{ request.session.site_name|default:request.session.site_id }}</p>
+        </div>
         {% with n=request.resolver_match.url_name %}
         <ul class="nav flex-column">
 

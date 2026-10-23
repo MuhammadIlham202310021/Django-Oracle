@@ -1,37 +1,83 @@
 import math
 from datetime import datetime
 from decimal import Decimal, InvalidOperation
+from functools import wraps
+from urllib.parse import quote
 
 import cx_Oracle
 from django.contrib import messages
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.views import LoginView
 from django.http import Http404
 from django.shortcuts import redirect, render
+from django.urls import reverse
 
 from . import oracle_db
 from .fields import AUDIT, FIELDS, LIST_COLUMNS, SECTIONS, SENSITIVE
+from .forms import CompSiteLoginForm
 
 TABLE = oracle_db.TABLE
 PER_PAGE = 25
-KEY_WHERE = "COMP_ID = :c AND SITE_ID = :s AND EMPCODE = :e"
+LOCKED = ('COMP_ID', 'SITE_ID') # diisi dari login, bukan dari form
+FORM_FIELDS = [f for f in FIELDS if f[0] not in LOCKED]
+SCOPE_WHERE = "COMP_ID = :c AND SITE_ID = :s"
+KEY_WHERE = SCOPE_WHERE + "AND EMPCODE = :e"
 
+# === LOGIN & AKSES ===
+class CompSiteLoginView(LoginView):
+    authentication_form = CompSiteLoginForm
+    
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        comp = form.cleaned_data['comp_id']
+        site = form.cleaned_data['site_id']
+        nama_comp, nama_site, = form.nama(comp, site)
+        # ID dipakai untuk filter query, nama hanya untuk tampilan
+        self.request.session['comp_id'] = comp
+        self.request.session['site_id'] = site
+        self.request.session['comp_name'] = nama_comp
+        self.request.session['site_name'] = nama_site
+        return response
+ 
+# comp_site_required menggantikan @login_required di semua halaman. Kalau session belum punya Comp/Site (misalnya Anda masuk lewat /admin/), pengguna dialihkan ke halaman login.   
+    
+def comp_site_required(view):
+    # Wajib login DAN punya Comp/Site di session.
+    @login_required
+    @wraps(view)
+    def wrapper(request, *args, **kwargs):
+        if not request.session.get('comp_id') or not request.session.get('site_id'):
+            logout(request)
+            return redirect('login')
+        return view(request, *args, **kwargs)
+    return wrapper
 
-@login_required
+# mengambil Comp/Site dari session. Semua query memakainya.
+def _scope(request):
+    return request.session['comp_id'], request.session['site_id']    
+# === END LOGIN & AKSES ===
+
+# === Halaman ===
+@comp_site_required
 def home(request):
     return render(request, 'biodata/home.html')
 
 # Lihat Data
-@login_required
+@comp_site_required
 def biodata_list(request):
+    comp, site = _scope(request)
     q = request.GET.get('q', '').strip()
     try:
         page = max(int(request.GET.get('page', 1)), 1)
     except ValueError:
         page = 1
 
-    where, binds = '', {}
+    where = f"WHERE {SCOPE_WHERE}"
+    binds = {'c': comp, 's': site}
     if q:
-        where = "WHERE UPPER(EMPCODE) LIKE :q OR UPPER(EMPNAME) LIKE :q"
+        # tanda kurung wajib agar OR tidak mengalahkan filter comp/site
+        where += " AND UPPER(EMPCODE) LIKE :q OR UPPER(EMPNAME) LIKE :q"
         binds['q'] = '%' + q.upper() + '%'
 
     total = oracle_db.scalar(f"SELECT COUNT(*) FROM {TABLE} {where}", binds)
@@ -52,14 +98,14 @@ def biodata_list(request):
     return render(request, 'biodata/list.html', {
         'rows': rows, 'q': q, 'page': page, 'pages': pages, 'total': total,
         'prev': page - 1, 'next': page + 1,
-        'columns': LIST_COLUMNS,
     })
 
 # Lihat Data secara keseluruhan
-@login_required
+@comp_site_required
 def biodata_detail(request):
-    binds = {'c': request.GET.get('comp', ''),
-             's': request.GET.get('site', ''),
+    comp, site = _scope(request)
+    binds = {'c': comp,
+             's': site,
              'e': request.GET.get('code', '')}
     cols = ", ".join([f[0] for f in FIELDS] + AUDIT)
     row = oracle_db.fetch_one(
@@ -86,7 +132,7 @@ def biodata_detail(request):
 
 # kolom kosong menghasilkan error hanya jika wajib
 def _parse(field, raw):
-    """Kembalikan (nilai_untuk_oracle, pesan_error)."""
+    # """Kembalikan (nilai_untuk_oracle, pesan_error)."""
     col, label, tipe, length, required = field
     raw = (raw or '').strip()
     if not raw:
@@ -112,27 +158,32 @@ def _form_sections(raw_values, errors):
             {'name': f[0], 'label': f[1], 'type': f[2], 'length': f[3],
              'req': f[4], 'value': raw_values.get(f[0], ''),
              'error': errors.get(f[0])}
-            for f in fields]}
+            for f in fields if f[0] not in LOCKED]}
         for title, fields in SECTIONS
     ]
 
 # Tambah Data biodata
-@login_required
+@comp_site_required
 def biodata_create(request):
+    comp, site = _scope(request)
     raw_values, errors = {}, {}
 
     if request.method == 'POST':
-        raw_values = {f[0]: request.POST.get(f[0], '') for f in FIELDS}
+        raw_values = {f[0]: request.POST.get(f[0], '') for f in FORM_FIELDS}
         parsed = {}
-        for f in FIELDS:
+        for f in FORM_FIELDS:
             value, err = _parse(f, raw_values[f[0]])
             if err:
                 errors[f[0]] = err
             else:
                 parsed[f[0]] = value
+                
+        # Comp dan Site selalu dari login, tidak bisa diubah lewat form
+        parsed['COMP_ID'] = comp
+        parsed['SITE_ID'] = site
 
         if not errors:
-            key = {'c': parsed['COMP_ID'], 's': parsed['SITE_ID'],
+            key = {'c': comp, 's': site,
                    'e': parsed['EMPCODE']}
             exists = oracle_db.scalar(
                 f"SELECT COUNT(*) FROM {TABLE} WHERE {KEY_WHERE}", key)
@@ -156,8 +207,7 @@ def biodata_create(request):
             else:
                 messages.success(request, 'Data berhasil ditambahkan.')
                 return redirect(
-                    '/biodata/lihat/?comp=%s&site=%s&code=%s'
-                    % (key['c'], key['s'], key['e']))
+                    f"{reverse('biodata:detail')}?code={quote(parsed['EMPCODE'])}")
 
         if errors:
             messages.error(request, 'Periksa kembali isian yang bertanda merah.')

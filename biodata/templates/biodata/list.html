@@ -11,7 +11,7 @@
         <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Cari kode atau nama pekerja">
     </div>
     <div class="col-auto">
-        <button class="btn btn-outline-secondary" type="submit">Cari</button>
+        <button class="btn btn-success" type="submit">Cari</button>
         {% if q %}<a href="{% url 'biodata:list' %}" class="btn btn-success">Reset</a>{% endif %}
     </div>
 </form>
@@ -20,15 +20,13 @@
 <table class="table table-sm table-striped table-hover bg-white align-middle">
     <thead class="table-dark">
         <tr>
-            <th>Perusahaan</th><th>Site</th><th>Kode</th><th>Nama</th>
-            <th>Department</th><th>Status</th><th>Aktif</th><th></th>
+            <th>Kode</th><th>Nama</th><th>Department</th>
+            <th>Status</th><th>Aktif</th><th></th>
         </tr>
     </thead>
     <tbody>
     {% for r in rows %}
         <tr>
-            <td>{{ r.COMP_ID }}</td>
-            <td>{{ r.SITE_ID }}</td>
             <td>{{ r.EMPCODE }}</td>
             <td>{{ r.EMPNAME|default_if_none:"" }}</td>
             <td>{{ r.DEPARTMENTCODE|default_if_none:"" }}</td>
@@ -36,11 +34,11 @@
             <td>{{ r.ACTIVE|default_if_none:"" }}</td>
             <td class="text-end">
                 <a class="btn btn-outline-primary btn-sm"
-                   href="{% url 'biodata:detail' %}?comp={{ r.COMP_ID|urlencode }}&site={{ r.SITE_ID|urlencode }}&code={{ r.EMPCODE|urlencode }}">Lihat</a>
+                   href="{% url 'biodata:detail' %}?code={{ r.EMPCODE|urlencode }}">Lihat</a>
             </td>
         </tr>
     {% empty %}
-        <tr><td colspan="8" class="text-center text-muted py-4">Tidak ada data.</td></tr>
+        <tr><td colspan="6" class="text-center text-muted py-4">Tidak ada data.</td></tr>
     {% endfor %}
     </tbody>
 </table>

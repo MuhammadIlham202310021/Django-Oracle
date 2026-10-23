@@ -97,8 +97,7 @@ FIELDS = [f for _, fields in SECTIONS for f in fields]
 AUDIT = ["INPUTBY", "INPUTDATE", "UPDATEBY", "UPDATEDATE"]
 
 # Kolom untuk halaman daftar
-LIST_COLUMNS = ["COMP_ID", "SITE_ID", "EMPCODE", "EMPNAME",
-                "DEPARTMENTCODE", "EMPSTATUS", "ACTIVE"]
+LIST_COLUMNS = ["EMPCODE", "EMPNAME", "DEPARTMENTCODE", "EMPSTATUS", "ACTIVE"]
 
 # Hanya terlihat oleh superuser sampai fitur role (Tahap 3) dibuat
 SENSITIVE = {"BASICSALARY", "NPWP", "IDCARD", "BANKACCOUNTNO",

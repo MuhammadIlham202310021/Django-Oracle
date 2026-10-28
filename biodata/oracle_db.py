@@ -36,7 +36,6 @@ def _view_name():
 
 VIEW_COMPSITE = _view_name()
     
-
 # membuka koneksi lalu menutupnya otomatis (finally), walaupun terjadi error. Setiap permintaan halaman membuka koneksi baru. Ini sederhana dan cukup untuk pemakaian internal. Kalau nanti pengguna banyak, bisa diganti connection pool.
 @contextmanager
 def get_connection():
@@ -51,11 +50,9 @@ def get_connection():
     finally:
         conn.close()
 
-
 def _rows_as_dicts(cur):
     names = [d[0] for d in cur.description]
     return [dict(zip(names, row)) for row in cur.fetchall()]
-
 
 def fetch_all(sql, binds=None):
     with get_connection() as conn:
@@ -63,18 +60,15 @@ def fetch_all(sql, binds=None):
         cur.execute(sql, binds or {})
         return _rows_as_dicts(cur)
 
-
 def fetch_one(sql, binds=None):
     rows = fetch_all(sql, binds)
     return rows[0] if rows else None
-
 
 def scalar(sql, binds=None):
     with get_connection() as conn:
         cur = conn.cursor()
         cur.execute(sql, binds or {})
         return cur.fetchone()[0]
-
 
 def execute(sql, binds=None):
     """Jalankan INSERT/UPDATE, commit bila berhasil."""

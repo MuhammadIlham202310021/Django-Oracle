@@ -22,7 +22,16 @@ PER_PAGE = 25
 LOCKED = ('COMP_ID', 'SITE_ID') # diisi dari login, bukan dari form
 FORM_FIELDS = [f for f in FIELDS if f[0] not in LOCKED]
 SCOPE_WHERE = "COMP_ID = :c AND SITE_ID = :s"
-KEY_WHERE = SCOPE_WHERE + "AND EMPCODE = :e"
+KEY_WHERE = SCOPE_WHERE + " AND EMPCODE = :e"
+
+# redirect(request.path) membuka kembali halaman yang sama lewat GET, sehingga form dimuat dengan token baru. Isian yang tadi diketik memang hilang, tetapi pesannya menjelaskan alasannya.
+def csrf_gagal(request, reason=''):
+    """Dipanggil Django saat token CSRF usang atau hilang."""
+    messages.error(
+        request,
+        'Halaman sudah kedaluwarsa (biasanya karena login atau logout di '
+        'tab lain). Silakan coba lagi.')
+    return redirect(request.path)
 
 # === LOGIN & AKSES ===
 class CompSiteLoginView(LoginView):
@@ -58,7 +67,7 @@ def _scope(request):
     return request.session['comp_id'], request.session['site_id']    
 # === END LOGIN & AKSES ===
 
-# === Halaman ===
+# === Halaman HOME ===
 @comp_site_required
 def home(request):
     return render(request, 'biodata/home.html')
@@ -77,7 +86,7 @@ def biodata_list(request):
     binds = {'c': comp, 's': site}
     if q:
         # tanda kurung wajib agar OR tidak mengalahkan filter comp/site
-        where += " AND UPPER(EMPCODE) LIKE :q OR UPPER(EMPNAME) LIKE :q"
+        where += " AND (UPPER(EMPCODE) LIKE :q OR UPPER(EMPNAME) LIKE :q)"
         binds['q'] = '%' + q.upper() + '%'
 
     total = oracle_db.scalar(f"SELECT COUNT(*) FROM {TABLE} {where}", binds)

@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -133,3 +135,6 @@ LOGOUT_REDIRECT_URL = 'login'
 from django.contrib.messages import constants as message_constants
 MESSAGE_TAGS = {message_constants.ERROR: 'danger'}
 
+SESSION_COOKIE_NAME = 'biodata_sessionid'
+CSRF_COOKIE_NAME = 'biodata_csrftoken'
+CSRF_FAILURE_VIEW = 'biodata.views.csrf_gagal'

@@ -19,6 +19,10 @@
                 </div>
             {% endif %}
 
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} py-2">{{ message }}</div>
+            {% endfor %}
+
             {% for err in form.non_field_errors %}
                 <div class="alert alert-danger py-2">{{ err }}</div>
             {% endfor %}
@@ -78,5 +82,6 @@
     compSel.addEventListener('change', function () { isiSite(''); });
     isiSite(siteAwal);
 </script>
+{% comment %} json_script menyisipkan struktur Comp/Site ke halaman dengan aman. Skrip kecil di bawah mengisi ulang dropdown Site setiap kali Comp diganti, sehingga hanya site milik comp itu yang muncul. {% endcomment %}
 </body>
 </html>

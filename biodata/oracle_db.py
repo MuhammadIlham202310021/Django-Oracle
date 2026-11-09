@@ -71,8 +71,9 @@ def scalar(sql, binds=None):
         return cur.fetchone()[0]
 
 def execute(sql, binds=None):
-    """Jalankan INSERT/UPDATE, commit bila berhasil."""
+    #Jalankan INSERT/UPDATE, commit bila berhasil. Mengembalikan jumlah baris terpengaruh.
     with get_connection() as conn:
         cur = conn.cursor()
         cur.execute(sql, binds or {})
         conn.commit()
+        return cur.rowcount

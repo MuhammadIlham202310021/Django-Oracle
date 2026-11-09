@@ -1,0 +1,238 @@
+@import url("palette.css");
+@import url("login.css");
+
+/* =====================================================
+   1. LOGO
+===================================================== */
+:root {
+    --side-logo-pad: 0;
+    --side-logo-bg: transparant;
+}
+
+.main-sidebar .brand-link {
+    display: block !important;
+    height: auto !important;
+    padding: var(--side-logo-pad) !important;
+    line-height: 0;
+    overflow: hidden;
+    border-bottom: 1px solid var(--c-border) !important;
+    background: var(--side-logo-bg) !important;
+}
+.main-sidebar .brand-link .brand-image {
+    display: block;
+    float: none !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: 96px !important;
+    object-fit: contain;
+    opacity: 1 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+.main-sidebar .brand-link .brand-text { display: none; }
+
+/* sidebar diciutkan: tampilkan bagian kiri logo (jadikan simbol di sisi kiri PNG) */
+.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover) .brand-link .brand-image {
+    height: 56px !important;
+    object-fit: cover;
+    object-position: left center;
+}
+
+/* =====================================================
+   2. SIDEBAR: panel user di pojok bawah
+   ===================================================== */
+.main-sidebar {
+    display: flex;
+    flex-direction: column;
+    background: var(--c-surface) !important;
+    border-right: 1px solid var(--c-border);
+    box-shadow: none !important;
+}
+.main-sidebar .brand-link { flex: 0 0 auto; }
+
+.main-sidebar .sidebar {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto !important;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.main-sidebar .user-panel-bawah {
+    flex: 0 0 auto;
+    width: 100%;
+    margin: 0 !important;
+    padding: .75rem 1rem !important;
+    align-items: center;
+    border-top: 1px solid var(--c-border);
+    border-bottom: 0 !important;
+    background: var(--c-bg);
+}
+.main-sidebar .user-panel-bawah .info a { color: var(--c-text) !important; }
+
+.avatar-inisial {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--c-primary);
+    color: #fff;
+    font-weight: 600;
+    font-size: .95rem;
+    text-transform: uppercase;
+}
+
+.main-sidebar .user-panel-bawah .user-profile,
+.main-sidebar .user-panel-bawah .fa-user-circle {
+    color: var(--c-primary) !important;
+    font-size: 2rem;
+}
+
+.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover) .user-panel-bawah .info {
+    display: none;
+}
+.sidebar-mini.sidebar-collapse .main-sidebar:not(:hover) .user-panel-bawah {
+    justify-content: center;
+}
+
+/* menu */
+.nav-sidebar .nav-link {
+    color: var(--c-text) !important;
+    border-radius: var(--radius);
+}
+.nav-sidebar .nav-link:hover {
+    background: var(--c-primary-soft) !important;
+    color: var(--c-primary-hover) !important;
+}
+.nav-sidebar .nav-link.active {
+    background: var(--c-primary-soft) !important;
+    color: var(--c-primary-hover) !important;
+    box-shadow: none !important;
+    font-weight: 600;
+}
+.nav-sidebar .nav-header {
+    color: var(--c-accent);
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+}
+
+/* =====================================================
+   3. TOMBOL KEMBALI
+   ===================================================== */
+.bar-kembali {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    color: #168CFB;
+}
+.tombol-kembali {
+    border-radius: 999px;
+    padding: .3rem 1rem;
+    transition: transform .15s ease;
+    color: #168CFB;
+}
+.tombol-kembali:hover { transform: translateX(-2px); }
+
+/* =====================================================
+   4. WARNA UMUM
+   ===================================================== */
+body,
+.content-wrapper {
+    background: var(--c-bg) !important;
+    color: var(--c-text);
+}
+
+.main-header.navbar {
+    background: var(--c-surface) !important;
+    border-bottom: 1px solid var(--c-border) !important;
+}
+
+a { color: var(--c-primary-hover); }
+a:hover { color: var(--c-primary); }
+
+.card {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius);
+    box-shadow: none;
+}
+
+/* tombol utama (Simpan) berwarna biru interaktif */
+.btn { border-radius: var(--radius); }
+.btn-primary,
+.btn-success {
+    background: var(--c-primary);
+    border-color: var(--c-primary);
+    color: #fff;
+}
+.btn-primary:hover,
+.btn-success:hover,
+.btn-primary:focus,
+.btn-success:focus {
+    background: var(--c-primary-hover);
+    border-color: var(--c-primary-hover);
+    color: #fff;
+}
+/* tombol sekunder (Simpan dan tambahkan lagi, dst.) berupa garis */
+.btn-info,
+.btn-default {
+    background: var(--c-primary);
+    border-color: var(--c-secondary);
+    color: var(--c-text);
+}
+.btn-info:hover,
+.btn-default:hover {
+    background: var(--c-primary-hover);
+    border-color: var(--c-primary);
+    color: var(--c-primary-hover);
+}
+
+/* isian form */
+.form-control,
+.custom-select {
+    border-color: var(--c-secondary);
+    border-radius: var(--radius);
+}
+.form-control:focus,
+.custom-select:focus {
+    border-color: var(--c-primary);
+    box-shadow: 0 0 0 .2rem rgba(22, 140, 251, .18);
+}
+
+/* tabel daftar */
+.table thead th {
+    background: var(--c-secondary-soft);
+    color: var(--c-text);
+    border-bottom: 1px solid var(--c-secondary);
+}
+
+/* pesan berhasil berwarna mint */
+.alert-success {
+    background: var(--c-status-soft);
+    border-color: var(--c-status);
+    color: var(--c-text);
+}
+
+/* =====================================================
+   LATAR HALAMAN LOGIN ADMIN
+   ===================================================== */
+body.login-page,
+body.login-admin {
+    min-height: 100vh;
+    background-color: var(--c-text) !important;
+    background-image:
+        linear-gradient(160deg,
+            rgba(47, 40, 52, .82) 0%,
+            rgba(47, 40, 52, .58) 55%,
+            rgba(22, 140, 251, .38) 100%),
+        url("../img/login-bg.jpg") !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}

@@ -1,18 +1,26 @@
 {% extends 'base.html' %}
-{% block title %}Tambah Biodata{% endblock %}
+{% block title %}{{ judul }}{% endblock %}
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">Tambah Biodata</h4>
-    <a href="{% url 'biodata:list' %}" class="btn btn-outline-secondary btn-sm">&laquo; Kembali</a>
+    <h4 class="mb-0">{{ judul }}</h4>
+    <div>
+        {% if mode == 'ubah' and bisa_ubah %}
+        <button type="button" class="btn btn-warning btn-sm js-ubah {% if edit_aktif %}d-none{% endif %}">Ubah</button>
+        {% endif %}
+        <a href="{% url 'biodata:list' %}" class="btn btn-outline-secondary btn-sm">&laquo; Kembali</a>
+    </div>
 </div>
 
+{% if mode == 'tambah' %}
 <div class="alert alert-info py-2">
     Data akan disimpan untuk <b>{{ request.session.comp_name|default:request.session.comp_id }}</b>
     / <b>{{ request.session.site_name|default:request.session.site_id }}</b>.
 </div>
+{% endif %}
 
 <form method="post" novalidate>
     {% csrf_token %}
+    <fieldset id="isian" {% if mode == 'ubah' and not edit_aktif %}disabled{% endif %}>
     {% for sec in sections %}
     <div class="card mb-3">
         <div class="card-header fw-bold">{{ sec.title }}</div>
@@ -20,8 +28,10 @@
             <div class="row g-3">
             {% for f in sec.fields %}
                 <div class="{% if f.type == 'textarea' %}col-12{% else %}col-md-4{% endif %}">
-                    <label class="form-label small mb-1">{{ f.label }}{% if f.req %} <span class="text-danger">*</span>{% endif %}</label>
-                    {% if f.type == 'textarea' %}
+                    <label class="form-label small mb-1">{{ f.label }}{% if f.req and not f.locked %} <span class="text-danger">*</span>{% endif %}</label>
+                    {% if f.locked %}
+                        <input type="text" value="{{ f.value }}" class="form-control" disabled>
+                    {% elif f.type == 'textarea' %}
                         <textarea name="{{ f.name }}" rows="3" maxlength="{{ f.length }}"
                                   class="form-control {% if f.error %}is-invalid{% endif %}">{{ f.value }}</textarea>
                     {% elif f.type == 'date' %}
@@ -41,10 +51,43 @@
         </div>
     </div>
     {% endfor %}
+    </fieldset>
 
-    <div class="mb-5">
+    {% if audit %}
+    <div class="card mb-3">
+        <div class="card-header fw-bold">Riwayat Input</div>
+        <div class="card-body">
+            <div class="row g-3">
+            {% for label, value in audit %}
+                <div class="col-md-3">
+                    <div class="small text-muted">{{ label }}</div>
+                    <div>{{ value|default:"-" }}</div>
+                </div>
+            {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="mb-5 js-aksi {% if mode == 'ubah' and not edit_aktif %}d-none{% endif %}">
         <button type="submit" class="btn btn-primary">Simpan</button>
-        <a href="{% url 'biodata:list' %}" class="btn btn-link">Batal</a>
+        <a href="{% if mode == 'ubah' %}{{ request.get_full_path }}{% else %}{% url 'biodata:list' %}{% endif %}"
+           class="btn btn-link">Batal</a>
     </div>
 </form>
+
+<script>
+    (function () {
+        var fs = document.getElementById('isian');
+        var tombolUbah = document.querySelectorAll('.js-ubah');
+        var aksi = document.querySelectorAll('.js-aksi');
+        tombolUbah.forEach(function (b) {
+            b.addEventListener('click', function () {
+                fs.disabled = false;
+                tombolUbah.forEach(function (x) { x.classList.add('d-none'); });
+                aksi.forEach(function (x) { x.classList.remove('d-none'); });
+            });
+        });
+    })();
+</script>
 {% endblock %}

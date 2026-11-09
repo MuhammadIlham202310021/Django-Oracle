@@ -1,0 +1,21 @@
+/* Satu-satunya tempat warna didefinisikan. Dipakai halaman biodata dan /admin/ */
+:root {
+    /* Enam warna dari desainer */
+    --c-bg: #FBFCFD;           /* latar halaman */
+    --c-secondary: #BCC3D2;    /* garis, tepi, elemen sekunder */
+    --c-text: #2F2834;         /* teks utama */
+    --c-accent: #9B6D7D;       /* pembeda informasi */
+    --c-primary: #168CFB;      /* elemen interaktif */
+    --c-status: #93E7B3;       /* status berhasil */
+
+    /* Turunan, dibuat dari enam warna di atas */
+    --c-surface: #FFFFFF;                        /* kartu, sidebar, navbar */
+    --c-primary-hover: #0B6FD6;                  /* biru lebih gelap: hover dan tautan teks */
+    --c-primary-soft: rgba(22, 140, 251, .10);   /* latar tipis menu aktif */
+    --c-border: rgba(188, 195, 210, .60);        /* garis tepi lembut */
+    --c-secondary-soft: #DDE1E8;                 /* header tabel */
+    --c-muted: #6E6776;                          /* teks sekunder */
+    --c-status-soft: rgba(147, 231, 179, .30);   /* latar pesan berhasil */
+    --c-accent-soft: rgba(155, 109, 125, .12);
+    --radius: .5rem;
+}

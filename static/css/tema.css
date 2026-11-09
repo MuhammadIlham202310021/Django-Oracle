@@ -1,0 +1,171 @@
+@import url("palette.css");
+
+/* ===== Variabel Bootstrap 5 diarahkan ke palet ===== */
+:root {
+    --sidebar-width: 250px;
+
+    --bs-body-bg: var(--c-bg);
+    --bs-body-bg-rgb: 251, 252, 253;
+    --bs-body-color: var(--c-text);
+    --bs-body-color-rgb: 47, 40, 52;
+    --bs-light-rgb: 251, 252, 253;
+    --bs-primary: var(--c-primary);
+    --bs-primary-rgb: 22, 140, 251;
+    --bs-link-color: var(--c-primary-hover);
+    --bs-link-color-rgb: 11, 111, 214;
+    --bs-link-hover-color: var(--c-primary-hover);
+    --bs-link-hover-color-rgb: 11, 111, 214;
+    --bs-border-color: var(--c-border);
+    --bs-secondary-color: var(--c-muted);
+}
+
+/* ===== Sidebar ===== */
+#sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0;
+    width: var(--sidebar-width);
+    background: var(--c-surface);
+    color: var(--c-text);
+    border-right: 1px solid var(--c-border);
+    overflow-y: auto; z-index: 1040;
+    transition: margin-left .25s;
+}
+#sidebar .brand { padding: 14px 18px; border-bottom: 1px solid var(--c-border); }
+#sidebar .brand img { display: block; max-width: 100%; max-height: 40px; width: auto; }
+#sidebar .user {
+    padding: 8px 18px; font-size: .85rem; color: var(--c-muted);
+    border-bottom: 1px solid var(--c-border);
+}
+#sidebar .user p { margin: 0; }
+#sidebar .nav { flex-wrap: nowrap; }
+#sidebar .nav-link {
+    color: var(--c-text); padding: 10px 18px;
+    border-left: 3px solid transparent;
+}
+#sidebar .nav-link:hover { background: var(--c-primary-soft); color: var(--c-primary-hover); }
+#sidebar .nav-link.active {
+    background: var(--c-primary-soft); color: var(--c-primary-hover);
+    border-left-color: var(--c-primary); font-weight: 600;
+}
+#sidebar .submenu .nav-link { padding-left: 35px; font-size: 14px; }
+#sidebar .submenu .submenu .nav-link { padding-left: 55px; }
+
+/* ===== Tata letak utama dan layar kecil (sama seperti sebelumnya) ===== */
+#main { margin-left: var(--sidebar-width); transition: margin-left .25s; }
+body.sidebar-closed #sidebar { margin-left: calc(var(--sidebar-width) * -1); }
+body.sidebar-closed #main { margin-left: 0; }
+@media (max-width: 767px) {
+    #main { margin-left: 0; }
+    #sidebar { margin-left: calc(var(--sidebar-width) * -1); }
+    body.sidebar-open #sidebar { margin-left: 0; }
+}
+
+/* ===== Navbar ===== */
+.navbar-app {
+    background: var(--c-surface);
+    border-bottom: 1px solid var(--c-border);
+}
+
+/* ===== Kartu ===== */
+.card {
+    background: var(--c-surface);
+    border: 1px solid var(--c-border);
+    border-radius: var(--radius);
+    box-shadow: none;
+}
+.card-header {
+    background: transparent;
+    color: var(--c-text);
+    border-bottom: 1px solid var(--c-border);
+    border-left: 3px solid var(--c-accent);   /* mauve: pembeda bagian */
+}
+
+/* ===== Tombol ===== */
+.btn { border-radius: var(--radius); }
+
+.btn-primary {
+    --bs-btn-bg: var(--c-primary);
+    --bs-btn-border-color: var(--c-primary);
+    --bs-btn-hover-bg: var(--c-primary-hover);
+    --bs-btn-hover-border-color: var(--c-primary-hover);
+    --bs-btn-active-bg: var(--c-primary-hover);
+    --bs-btn-active-border-color: var(--c-primary-hover);
+    --bs-btn-disabled-bg: var(--c-primary);
+    --bs-btn-disabled-border-color: var(--c-primary);
+}
+.btn-outline-primary {
+    --bs-btn-color: var(--c-primary-hover);
+    --bs-btn-border-color: var(--c-primary);
+    --bs-btn-hover-bg: var(--c-primary);
+    --bs-btn-hover-border-color: var(--c-primary);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-active-bg: var(--c-primary-hover);
+    --bs-btn-active-border-color: var(--c-primary-hover);
+    --bs-btn-active-color: #fff;
+}
+.btn-outline-secondary {
+    --bs-btn-color: var(--c-text);
+    --bs-btn-border-color: var(--c-secondary);
+    --bs-btn-hover-bg: var(--c-secondary-soft);
+    --bs-btn-hover-border-color: var(--c-secondary);
+    --bs-btn-hover-color: var(--c-text);
+    --bs-btn-active-bg: var(--c-secondary-soft);
+    --bs-btn-active-border-color: var(--c-secondary);
+    --bs-btn-active-color: var(--c-text);
+}
+/* tombol "Ubah" memakai warna aksen mauve */
+.btn-warning {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--c-accent);
+    --bs-btn-border-color: var(--c-accent);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #85596A;
+    --bs-btn-hover-border-color: #85596A;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #85596A;
+    --bs-btn-active-border-color: #85596A;
+}
+
+/* ===== Isian form ===== */
+.form-control, .form-select {
+    background: var(--c-surface);
+    border-color: var(--c-secondary);
+    border-radius: var(--radius);
+}
+.form-control:focus, .form-select:focus {
+    border-color: var(--c-primary);
+    box-shadow: 0 0 0 .2rem rgba(22, 140, 251, .18);
+}
+
+/* ===== Tabel ===== */
+.table-dark {
+    --bs-table-color: var(--c-text);
+    --bs-table-bg: var(--c-secondary-soft);
+    --bs-table-border-color: var(--c-border);
+    color: var(--c-text);
+}
+.table-striped {
+    --bs-table-striped-bg: rgba(188, 195, 210, .18);
+}
+
+/* ===== Pesan ===== */
+.alert-success {
+    --bs-alert-color: var(--c-text);
+    --bs-alert-bg: var(--c-status-soft);
+    --bs-alert-border-color: var(--c-status);
+}
+.alert-info {
+    --bs-alert-color: var(--c-text);
+    --bs-alert-bg: var(--c-primary-soft);
+    --bs-alert-border-color: rgba(22, 140, 251, .35);
+}
+
+/* ===== Label status (hijau mint), dipakai di tempat yang butuh ===== */
+.chip-status {
+    display: inline-block;
+    padding: .1rem .55rem;
+    border-radius: 999px;
+    background: var(--c-status);
+    color: var(--c-text);
+    font-size: .8rem;
+    font-weight: 600;
+}

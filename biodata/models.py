@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db import models
 
 class AksesUser(models.Model):
-    # """Daftar Comp/Site yang boleh dipakai oleh seorang user."""
+    """Daftar Comp/Site yang boleh dipakai oleh seorang user."""
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE, related_name='akses')
     comp_id = models.CharField(max_length=6)

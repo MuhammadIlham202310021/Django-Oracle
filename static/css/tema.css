@@ -84,7 +84,8 @@ body.sidebar-closed #main { margin-left: 0; }
 
 .btn-reset,
 .btn-ubah,
-.btn-kembali {
+.btn-kembali,
+.btn-batal {
     --bs-btn-color: var(--c-text);
     --bs-btn-hover-color: var(--c-text);
     --bs-btn-bg: var(--c-status);

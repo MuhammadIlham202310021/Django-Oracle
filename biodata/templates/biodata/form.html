@@ -80,7 +80,7 @@
     <div class="mb-5 simpan-form js-aksi {% if mode == 'ubah' and not edit_aktif %}d-none{% endif %}">
         <button type="submit" class="btn btn-primary">Simpan</button>
         <a href="{% if mode == 'ubah' %}{{ request.get_full_path }}{% else %}{% url 'biodata:list' %}{% endif %}"
-           class="btn btn-kembali">Batal</a>
+           class="btn btn-batal">Batal</a>
     </div>
 </form>
 

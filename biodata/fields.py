@@ -1,7 +1,7 @@
-# """Definisi kolom tabel EMPMASTEREPMS.
-# Format: (kolom, label, tipe, panjang_byte, wajib)
-# tipe: text | textarea | date | number
-# """
+"""Definisi kolom tabel EMPMASTEREPMS.
+Format: (kolom, label, tipe, panjang_byte, wajib)
+tipe: text | textarea | date | number
+"""
 
 SECTIONS = [
     ("Identitas", [

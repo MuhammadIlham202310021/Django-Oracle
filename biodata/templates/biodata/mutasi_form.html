@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %}Tambah Mutasi dan Termination{% endblock %}
+{% block judul %}Tambah Transaksi{% endblock %}
+{% block crumb %}<a href="{% url 'biodata:mutasi' %}">Mutasi &amp; Termination</a><span class="sep">&rsaquo;</span>Tambah{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 760px;">
+    <div class="card-header fw-bold">Data transaksi</div>
+    <div class="card-body">
+        <form method="post" novalidate
+              onsubmit="return confirm('Simpan transaksi ini? Data yang sudah tersimpan tidak dapat diubah dari aplikasi ini.');">
+            {% csrf_token %}
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <label class="form-label small mb-1">NIK <span class="text-danger">*</span></label>
+                    <input type="text" name="NIK_STAFF" value="{{ raw.NIK_STAFF }}" maxlength="15"
+                           class="form-control {% if errors.NIK_STAFF %}is-invalid{% endif %}">
+                    {% if errors.NIK_STAFF %}<div class="invalid-feedback d-block">{{ errors.NIK_STAFF }}</div>{% endif %}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label small mb-1">Jenis transaksi <span class="text-danger">*</span></label>
+                    <select name="TERM_TYPE" id="jenis" class="form-select {% if errors.TERM_TYPE %}is-invalid{% endif %}">
+                        <option value="">Pilih jenis</option>
+                        {% for kode, label in jenis %}
+                        <option value="{{ kode }}" {% if kode == raw.TERM_TYPE %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if errors.TERM_TYPE %}<div class="invalid-feedback d-block">{{ errors.TERM_TYPE }}</div>{% endif %}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label small mb-1">Site tujuan (khusus Mutasi)</label>
+                    <select name="MUTATION_SITE" id="tujuan" class="form-select {% if errors.MUTATION_SITE %}is-invalid{% endif %}">
+                        <option value="">Pilih site</option>
+                        {% for sid, nama in sites %}
+                        <option value="{{ sid }}" {% if sid == raw.MUTATION_SITE %}selected{% endif %}>{{ nama }}</option>
+                        {% endfor %}
+                    </select>
+                    {% if errors.MUTATION_SITE %}<div class="invalid-feedback d-block">{{ errors.MUTATION_SITE }}</div>{% endif %}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label small mb-1">Tanggal berhenti / pindah <span class="text-danger">*</span></label>
+                    <input type="date" name="TERMINATE_DATE" value="{{ raw.TERMINATE_DATE }}"
+                           class="form-control {% if errors.TERMINATE_DATE %}is-invalid{% endif %}">
+                    {% if errors.TERMINATE_DATE %}<div class="invalid-feedback d-block">{{ errors.TERMINATE_DATE }}</div>{% endif %}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label small mb-1">Alasan (Terminate type)</label>
+                    <input type="text" name="TERM_TYPE_ID" value="{{ raw.TERM_TYPE_ID }}" maxlength="15"
+                           list="daftar-alasan" autocomplete="off"
+                           class="form-control {% if errors.TERM_TYPE_ID %}is-invalid{% endif %}">
+                    <datalist id="daftar-alasan">
+                        {% for a in alasan %}<option value="{{ a }}">{% endfor %}
+                    </datalist>
+                    {% if errors.TERM_TYPE_ID %}<div class="invalid-feedback d-block">{{ errors.TERM_TYPE_ID }}</div>{% endif %}
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label small mb-1">Sisa cuti</label>
+                    <input type="number" step="any" min="0" name="SISA_CUTI" value="{{ raw.SISA_CUTI }}"
+                           class="form-control {% if errors.SISA_CUTI %}is-invalid{% endif %}">
+                    {% if errors.SISA_CUTI %}<div class="invalid-feedback d-block">{{ errors.SISA_CUTI }}</div>{% endif %}
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label small mb-1">Keterangan (Reason of resign) <span class="text-danger">*</span></label>
+                    <textarea name="REASON_OF_RESIGN" rows="3" maxlength="1000"
+                              class="form-control {% if errors.REASON_OF_RESIGN %}is-invalid{% endif %}">{{ raw.REASON_OF_RESIGN }}</textarea>
+                    {% if errors.REASON_OF_RESIGN %}<div class="invalid-feedback d-block">{{ errors.REASON_OF_RESIGN }}</div>{% endif %}
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Simpan</button>
+                <a href="{% url 'biodata:mutasi' %}" class="btn btn-link">Batal</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var jenis = document.getElementById('jenis');
+        var tujuan = document.getElementById('tujuan');
+        function atur() {
+            var mutasi = jenis.value === '{{ kode_mutasi|escapejs }}';
+            tujuan.disabled = !mutasi;
+            if (!mutasi) { tujuan.value = ''; }
+        }
+        jenis.addEventListener('change', atur);
+        atur();
+    })();
+</script>
+{% endblock %}

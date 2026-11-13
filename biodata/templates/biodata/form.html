@@ -1,14 +1,21 @@
 {% extends 'base.html' %}
 {% block title %}{{ judul }}{% endblock %}
+{% block judul %}{{ judul }}{% endblock %}
+{% block crumb %}<a href="{% url 'biodata:list' %}">Biodata</a><span class="sep">&rsaquo;</span>{% if mode == 'ubah' %}Ubah{% else %}Tambah{% endif %}{% endblock %}
+
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">{{ judul }}</h4>
-    <div>
-        {% if mode == 'ubah' and bisa_ubah %}
-        <button type="button" class="btn btn-warning btn-sm js-ubah {% if edit_aktif %}d-none{% endif %}">Ubah</button>
-        {% endif %}
-        <a href="{% url 'biodata:list' %}" class="btn btn-outline-secondary btn-sm">&laquo; Kembali</a>
-    </div>
+{% if mode == 'ubah' %}
+    {% include 'biodata/_tab_pekerja.html' with tab='data' kode=request.GET.code %}
+{% endif %}
+<div class="d-flex justify-content-end gap-2 mb-3">
+    {% if mode == 'ubah' and bisa_ubah %}
+    <button type="button" class="btn btn-ubah btn-sm js-ubah {% if edit_aktif %}d-none{% endif %}">
+        <i class="bi bi-pencil-square"></i> Ubah
+    </button>
+    {% endif %}
+    <a href="{% url 'biodata:list' %}" class="btn btn-kembali btn-sm">
+        <i class="bi bi-arrow-left"></i> Kembali
+    </a>
 </div>
 
 {% if mode == 'tambah' %}
@@ -31,6 +38,7 @@
                     <label class="form-label small mb-1">{{ f.label }}{% if f.req and not f.locked %} <span class="text-danger">*</span>{% endif %}</label>
                     {% if f.locked %}
                         <input type="text" value="{{ f.value }}" class="form-control" disabled>
+                        {% if f.hint %}<div class="form-text">Diubah lewat tab {{ f.hint }}</div>{% endif %}
                     {% elif f.type == 'textarea' %}
                         <textarea name="{{ f.name }}" rows="3" maxlength="{{ f.length }}"
                                   class="form-control {% if f.error %}is-invalid{% endif %}">{{ f.value }}</textarea>
@@ -69,10 +77,10 @@
     </div>
     {% endif %}
 
-    <div class="mb-5 js-aksi {% if mode == 'ubah' and not edit_aktif %}d-none{% endif %}">
+    <div class="mb-5 simpan-form js-aksi {% if mode == 'ubah' and not edit_aktif %}d-none{% endif %}">
         <button type="submit" class="btn btn-primary">Simpan</button>
         <a href="{% if mode == 'ubah' %}{{ request.get_full_path }}{% else %}{% url 'biodata:list' %}{% endif %}"
-           class="btn btn-link">Batal</a>
+           class="btn btn-kembali">Batal</a>
     </div>
 </form>
 

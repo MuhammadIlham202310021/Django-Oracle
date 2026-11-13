@@ -103,3 +103,10 @@ LIST_COLUMNS = ["EMPCODE", "EMPNAME", "DEPARTMENTCODE", "EMPSTATUS", "ACTIVE"]
 SENSITIVE = {"BASICSALARY", "NPWP", "IDCARD", "BANKACCOUNTNO",
              "BANKACCOUNTNAME", "NO_KK", "NOJAMSOSTEK", "BPJSID",
              "LIFEINSURANCENO"}
+
+# Kode status untuk dropdown Tax Status (satu-satunya tempat daftar ini ditulis)
+KODE_PAJAK = ["K/0","K/1","K/2","K/3","K/4","TK","K/0","K/1","K/2","K/3",]
+KODE_BERAS = KODE_PAJAK
+
+JENIS_TRANSAKSI = [("MUTASI", "Mutasi"), ("KELUAR", "Keluar")]
+KODE_MUTASI = "MUTASI"

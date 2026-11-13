@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.db import models
 
-
 class AksesUser(models.Model):
     # """Daftar Comp/Site yang boleh dipakai oleh seorang user."""
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -17,6 +16,10 @@ class AksesUser(models.Model):
             ('tambah_biodata', 'Boleh menambah biodata'),
             ('ubah_biodata', 'Boleh mengubah biodata'),
             ('lihat_sensitif', 'Boleh melihat dan mengisi kolom sensitif'),
+            ('tambah_taxstatus', 'Boleh menambah tax status'),
+            ('tambah_karier', 'Boleh menambah riwayat karir'),
+            ('lihat_mutasi', 'Boleh melihat mutasi dan termination'),
+            ('tambah_mutasi', 'Boleh menambah mutasi dan termination'),
         ]
 
     def __str__(self):

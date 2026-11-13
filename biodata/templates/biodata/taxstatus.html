@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Tax Status{% endblock %}
+{% block judul %}{{ pekerja.EMPCODE }} - {{ pekerja.EMPNAME|default_if_none:"" }}{% endblock %}
+{% block crumb %}<a href="{% url 'biodata:list' %}">Biodata</a><span class="sep">&rsaquo;</span>Tax Status{% endblock %}
+
+{% block content %}
+{% include 'biodata/_tab_pekerja.html' with tab='tax' kode=pekerja.EMPCODE %}
+
+<div class="row g-3">
+    <div class="{% if bisa_tambah %}col-lg-8{% else %}col-12{% endif %}">
+        <div class="card">
+            <div class="card-header fw-bold">Riwayat Status</div>
+            <div class="table-responsive">
+                <table class="table table-sm table-striped align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Berlaku mulai</th><th>Status Pajak</th><th>Status Beras</th>
+                            <th>Diinput oleh</th><th>Waktu input</th><th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for r in riwayat %}
+                        <tr>
+                            <td>{{ r.TGL }}</td>
+                            <td>{{ r.TAX_STAT_ID|default_if_none:"-" }}</td>
+                            <td>{{ r.RICE_STAT_ID|default_if_none:"-" }}</td>
+                            <td>{{ r.INPUTBY|default_if_none:"-" }}</td>
+                            <td>{{ r.WAKTU_INPUT|default:"-" }}</td>
+                            <td>{% if r.BERLAKU %}<span class="chip-status">Berlaku</span>{% endif %}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="6" class="text-center text-muted py-4">Belum ada riwayat status.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% if bisa_tambah %}
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header fw-bold">Tambah status baru</div>
+            <div class="card-body">
+                <form method="post" novalidate
+                      onsubmit="return confirm('Simpan status baru? Data yang sudah tersimpan tidak dapat diubah dari aplikasi ini.');">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label small mb-1">Tanggal berlaku</label>
+                        <input type="text" class="form-control" value="Hari ini" disabled>
+                        <div class="form-text">Ditetapkan otomatis oleh server.</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small mb-1">Status Pajak <span class="text-danger">*</span></label>
+                        <select name="TAX_STAT_ID" class="form-select {% if errors.TAX_STAT_ID %}is-invalid{% endif %}">
+                            <option value="">Pilih status pajak</option>
+                            {% for k in kode_pajak %}
+                            <option value="{{ k }}" {% if k == raw.TAX_STAT_ID %}selected{% endif %}>{{ k }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if errors.TAX_STAT_ID %}<div class="invalid-feedback d-block">{{ errors.TAX_STAT_ID }}</div>{% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small mb-1">Status Beras <span class="text-danger">*</span></label>
+                        <select name="RICE_STAT_ID" class="form-select {% if errors.RICE_STAT_ID %}is-invalid{% endif %}">
+                            <option value="">Pilih status beras</option>
+                            {% for k in kode_beras %}
+                            <option value="{{ k }}" {% if k == raw.RICE_STAT_ID %}selected{% endif %}>{{ k }}</option>
+                            {% endfor %}
+                        </select>
+                        {% if errors.RICE_STAT_ID %}<div class="invalid-feedback d-block">{{ errors.RICE_STAT_ID }}</div>{% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-plus-circle-fill"></i> Simpan
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

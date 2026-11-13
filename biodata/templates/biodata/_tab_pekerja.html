@@ -1,0 +1,14 @@
+<ul class="nav nav-tabs mb-3">
+    <li class="nav-item">
+        <a class="nav-link {% if tab == 'data' %}active{% endif %}"
+            href="{% url 'biodata:edit' %}?code={{ kode|urlencode }}">Data Pribadi</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if tab == 'tax' %}active{% endif %}"
+            href="{% url 'biodata:taxstatus' %}?code={{ kode|urlencode }}">Tax Status</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link {% if tab == 'karier' %}active{% endif %}"
+            href="{% url 'biodata:karier' %}?code={{ kode|urlencode }}">Riwayat Karir</a>
+    </li>
+</ul>

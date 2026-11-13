@@ -1,0 +1,181 @@
+@import url("palette.css");
+
+:root {
+    --side-logo-pad: 0;            /* logo kecil dan sesak: .9rem 1.2rem */
+    --side-logo-bg: transparent;   /* logo berwarna terang: var(--c-text) */
+}
+
+/* =====================================================
+   SIDEBAR
+   ===================================================== */
+#sidebar {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: var(--c-surface);
+    border-right: 1px solid var(--c-border);
+}
+
+/* logo selebar sidebar */
+#sidebar .brand {
+    display: block;
+    flex: 0 0 auto;
+    padding: var(--side-logo-pad);
+    background: var(--side-logo-bg);
+    border-bottom: 1px solid var(--c-border);
+    line-height: 0;
+    overflow: hidden;
+}
+#sidebar .brand img {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    max-height: 96px;
+    object-fit: contain;
+}
+
+/* menu: mengisi ruang tengah dan bisa di-scroll sendiri */
+#sidebar .side-menu {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: .5rem .5rem 1rem;
+}
+
+#sidebar .nav-header {
+    list-style: none;
+    padding: .9rem .75rem .35rem;
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--c-accent);
+}
+
+#sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .6rem .75rem;
+    border-left: 0;
+    border-radius: var(--radius);
+    color: var(--c-text);
+}
+#sidebar .nav-link i {
+    width: 1.25rem;
+    text-align: center;
+    font-size: 1.05rem;
+    color: var(--c-text);
+}
+#sidebar .nav-link:hover {
+    background: var(--c-primary-soft);
+    color: var(--c-primary-hover);
+}
+#sidebar .nav-link:hover i { color: var(--c-primary-hover); }
+#sidebar .nav-link.active {
+    background: var(--c-primary-soft);
+    color: var(--c-primary-hover);
+    font-weight: 600;
+}
+#sidebar .nav-link.active i { color: var(--c-primary); }
+
+/* panel user di dasar */
+#sidebar .side-user {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: 0.4rem 1rem;
+    border-top: 1px solid var(--c-border);
+    background: var(--c-bg);
+    /* border: 1px solid; */
+}
+#sidebar .side-user .nama { font-weight: 600; line-height: 1.2; }
+#sidebar .side-user .unit {
+    font-size: .78rem;
+    line-height: 1.4;
+    color: var(--c-muted);
+}
+#sidebar .side-user .unit i { margin-right: .35rem; }
+
+.avatar-inisial {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--c-primary);
+    color: #fff;
+    font-weight: 600;
+    font-size: .95rem;
+    text-transform: uppercase;
+}
+
+.side-user-out {
+    margin-left: 1.5rem;
+}
+
+/* =====================================================
+   AREA UTAMA
+   ===================================================== */
+#main {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+.navbar-app { min-height: 56px; margin: 0 0.6rem;}
+.isi { flex: 1 0 auto; }
+
+/* judul halaman dan breadcrumb di navbar */
+.navbar-judul {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    margin-left: .75rem;
+}
+.navbar-judul .halaman-judul {
+    margin: 0 .85rem 0 0;
+    padding-right: .85rem;
+    border-right: 1px solid var(--c-secondary);
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.2;
+    color: var(--c-text);
+    white-space: nowrap;
+    max-width: 36vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.halaman-crumb { font-size: .9rem; color: var(--c-muted); white-space: nowrap; }
+.halaman-crumb a { color: var(--c-primary-hover); text-decoration: none; }
+.halaman-crumb a:hover { text-decoration: underline; }
+.halaman-crumb .sep { margin: 0 .5rem; color: var(--c-secondary); }
+
+.simpan-form {
+    display: flex; 
+    justify-content: flex-end; 
+    gap: 5px; 
+    margin-top: 15px; 
+}
+
+/* layar kecil: breadcrumb disembunyikan agar judul tetap muat */
+@media (max-width: 767px) {
+    .navbar-judul .halaman-crumb { display: none; }
+}
+
+/* footer */
+.app-footer {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .25rem 1rem;
+    padding: .9rem 1.5rem;
+    background: var(--c-surface);
+    border-top: 1px solid var(--c-border);
+    font-size: .85rem;
+    color: var(--c-muted);
+}

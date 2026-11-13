@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block title %}Riwayat Karir{% endblock %}
+{% block judul %}{{ pekerja.EMPCODE }} - {{ pekerja.EMPNAME|default_if_none:"" }}{% endblock %}
+{% block crumb %}<a href="{% url 'biodata:list' %}">Biodata</a><span class="sep">&rsaquo;</span>Riwayat Karir{% endblock %}
+
+{% block content %}
+{% include 'biodata/_tab_pekerja.html' with tab='karier' kode=pekerja.EMPCODE %}
+
+<div class="row g-3">
+    <div class="{% if bisa_tambah %}col-lg-8{% else %}col-12{% endif %}">
+        <div class="card">
+            <div class="card-header fw-bold">Riwayat Karir</div>
+            <div class="table-responsive">
+                <table class="table table-sm table-striped align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Mulai</th><th>Jabatan</th><th>Department</th><th>Unit</th>
+                            <th>Job Spec</th><th>Diinput oleh</th><th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for r in riwayat %}
+                        <tr>
+                            <td>{{ r.TGL }}</td>
+                            <td>{{ r.ID_POSITION|default_if_none:"-" }}</td>
+                            <td>{{ r.DEPT_ID|default_if_none:"-" }}</td>
+                            <td>{{ r.UNIT_ID|default_if_none:"-" }}</td>
+                            <td>{{ r.JOB_SPEC|default_if_none:"-" }}{% if r.JOB_DESC %}<div class="small text-muted">{{ r.JOB_DESC }}</div>{% endif %}</td>
+                            <td>{{ r.INPUTBY|default_if_none:"-" }}<div class="small text-muted">{{ r.WAKTU_INPUT }}</div></td>
+                            <td>{% if r.BERLAKU %}<span class="chip-status">Berlaku</span>{% endif %}</td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="7" class="text-center text-muted py-4">Belum ada riwayat karir.</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% if bisa_tambah %}
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header fw-bold">Tambah riwayat baru</div>
+            <div class="card-body">
+                <form method="post" novalidate
+                      onsubmit="return confirm('Simpan riwayat karir baru? Data yang sudah tersimpan tidak dapat diubah dari aplikasi ini.');">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label class="form-label small mb-1">Tanggal mulai <span class="text-danger">*</span></label>
+                        <input type="date" name="TGL_AWAL" value="{{ raw.TGL_AWAL }}"
+                               class="form-control {% if errors.TGL_AWAL %}is-invalid{% endif %}">
+                        {% if errors.TGL_AWAL %}<div class="invalid-feedback d-block">{{ errors.TGL_AWAL }}</div>{% endif %}
+                    </div>
+
+                    {% for f in kolom_teks %}
+                    <div class="mb-3">
+                        <label class="form-label small mb-1">{{ f.label }} <span class="text-danger">*</span></label>
+                        <input type="text" name="{{ f.name }}" value="{{ f.value }}" maxlength="15"
+                               class="form-control {% if f.error %}is-invalid{% endif %}">
+                        {% if f.error %}<div class="invalid-feedback d-block">{{ f.error }}</div>{% endif %}
+                    </div>
+                    {% endfor %}
+
+                    <div class="mb-3">
+                        <label class="form-label small mb-1">Job Spec <span class="text-danger">*</span></label>
+                        <input type="text" name="JOB_SPEC" value="{{ raw.JOB_SPEC }}" maxlength="15" list="daftar-jobspec"
+                               placeholder="Ketik kode atau nama" autocomplete="off"
+                               class="form-control {% if errors.JOB_SPEC %}is-invalid{% endif %}">
+                        <datalist id="daftar-jobspec">
+                            {% for j in jobspec %}<option value="{{ j.JOBSPECCODE }}">{{ j.DESCRIPTION|default_if_none:"" }}</option>{% endfor %}
+                        </datalist>
+                        {% if errors.JOB_SPEC %}<div class="invalid-feedback d-block">{{ errors.JOB_SPEC }}</div>{% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-plus-circle-fill"></i> Simpan
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

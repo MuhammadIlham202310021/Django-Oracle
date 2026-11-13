@@ -6,54 +6,96 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Data Pekerja{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link href="{% static 'css/tema.css' %}" rel="stylesheet">
+    <link href="{% static 'css/layout.css' %}" rel="stylesheet">
 </head>
 <body class="bg-light">
 
     <!-- SIDEBAR -->
     <aside id="sidebar">
-        <div class="brand">
-            <img src="{% static 'img/eplant.png' %}" alt="Sistem Data Pekerja">
-        </div>
-        <div class="user">
-            <p class="mb-1">User: {{ user.username }}</p>
-            <p class="mb-0 small text-info">{{ request.session.comp_name|default:request.session.comp_id }}<br>{{ request.session.site_name|default:request.session.site_id }}</p>
-        </div>
-        {% with n=request.resolver_match.url_name %}
-        <ul class="nav flex-column">
+        <a class="brand" href="{% url 'biodata:home' %}">
+            <img src="{% static 'img/logo.png' %}" alt="Sistem Data Pekerja">
+        </a>
 
-            <li class="nav-item">
-                <a class="nav-link {% if n == 'home' %}active{% endif %}"
-                   href="{% url 'biodata:home' %}">Home</a>
-            </li>
+        <nav class="side-menu">
+            {% with n=request.resolver_match.url_name %}
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link {% if n == 'home' %}active{% endif %}"
+                       href="{% url 'biodata:home' %}">
+                        <i class="bi bi-grid-fill"></i><span>Dashboard</span>
+                    </a>
+                </li>
 
-            <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="collapse" href="#menuPayroll" role="button">Payroll &#9662;</a>
-                <ul class="nav flex-column submenu collapse {% if n == 'list' or n == 'edit' or n == 'create' %}show{% endif %}" id="menuPayroll">
-                    <li class="nav-item">
-                        <a class="nav-link {% if n == 'list' or n == 'edit' or n == 'create' %}     active{%         endif %}"
-                           href="{% url 'biodata:list' %}">Biodata</a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
-        {% endwith %}
+                <li class="nav-header">Payroll</li>
+                <li class="nav-item">
+                    <a class="nav-link {% if n == 'list' or n == 'edit' or n == 'create' or n == 'taxstatus' or n == 'karier' %}active{% endif %}"
+                       href="{% url 'biodata:list' %}">
+                        <i class="bi bi-people-fill"></i><span>Biodata</span>
+                    </a>
+                </li>
+
+                {% if perms.biodata.lihat_mutasi %}
+                <li class="nav-item">
+                    <a class="nav-link {% if n == 'mutasi' or n == 'mutasi_tambah' %}active{% endif %}"
+                       href="{% url 'biodata:mutasi' %}">
+                        <i class="bi bi-arrow-left-right"></i><span>Mutasi &amp; Termination</span>
+                    </a>
+                </li>
+                {% endif %}
+
+                {# Menu baru: tambahkan <li class="nav-header"> untuk bagian, lalu <li class="nav-item"> untuk menunya #}
+            </ul>
+            {% endwith %}
+        </nav>
+
+        <div class="side-user">
+            <span class="avatar-inisial">{{ user.username|slice:":1"|upper }}</span>
+            <div>
+                <div class="nama">{{ user.username }}</div>
+                <div class="unit">
+                    {% comment %} <div><i class="bi bi-building"></i>{{ request.session.comp_name|default:request.session.comp_id }}</div>
+                    <div><i class="bi bi-geo-alt"></i>{{ request.session.site_name|default:request.session.site_id }}</div> {% endcomment %}
+                </div>
+            </div>
+            <div class="side-user-out">
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </button>
+                </form>
+            </div>
+        </div>
     </aside>
 
     <!-- KONTEN UTAMA -->
     <div id="main">
-        <nav class="navbar navbar-app px-3">
-            <button id="toggleSidebar" class="btn btn-outline-secondary btn-sm" type="button">&#9776;</button>
+        <nav class="navbar navbar-app flex-nowrap px-3">
+            <button id="toggleSidebar" class="btn btn-outline-secondary btn-sm" type="button" aria-label="Buka atau tutup menu">
+                <i class="bi bi-list"></i>
+            </button>
+        
+            <div class="navbar-judul">
+                <h1 class="halaman-judul">{% block judul %}{% endblock %}</h1>
+                <div class="halaman-crumb">
+                    <a href="{% url 'biodata:home' %}">Beranda</a><span class="sep">&rsaquo;</span>{% block crumb %}{% endblock %}
+                </div>
+            </div>
+        
             <div class="d-flex align-items-center ms-auto">
-                <span class="me-3">{{ user.username }}</span>
+                <span class="me-3 d-none d-sm-inline">{{ user.username }}</span>
                 <form method="post" action="{% url 'logout' %}">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-outline-secondary btn-sm">Logout</button>
+                    <button type="submit" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </button>
                 </form>
             </div>
         </nav>
 
-        <div class="container-fluid my-4 px-4">
+        <div class="container-fluid isi mt-3 mb-4 px-4">
             {% for message in messages %}
                 <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
                     {{ message }}
@@ -63,6 +105,11 @@
 
             {% block content %}{% endblock %}
         </div>
+
+        <footer class="app-footer">
+            <span>Copyright &copy; {% now "Y" %}. All rights reserved.</span>
+            <span>Sistem Data Pekerja</span>
+        </footer>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

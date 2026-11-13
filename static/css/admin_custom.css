@@ -181,7 +181,8 @@ a:hover { color: var(--c-primary); }
 }
 /* tombol sekunder (Simpan dan tambahkan lagi, dst.) berupa garis */
 .btn-info,
-.btn-default {
+.btn-default
+{
     background: var(--c-primary);
     border-color: var(--c-secondary);
     color: var(--c-text);
@@ -192,6 +193,7 @@ a:hover { color: var(--c-primary); }
     border-color: var(--c-primary);
     color: var(--c-primary-hover);
 }
+
 
 /* isian form */
 .form-control,

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Mutasi dan Termination{% endblock %}
+{% block judul %}Mutasi &amp; Termination{% endblock %}
+{% block crumb %}Payroll<span class="sep">&rsaquo;</span>Mutasi &amp; Termination{% endblock %}
+
+{% block content %}
+{% if belum_siap %}
+<div class="alert alert-warning">Nama tabel belum diisi. Tambahkan <code>ORA_TABLE_MUTASI</code> di berkas <code>.env</code>, lalu restart server.</div>
+{% else %}
+<form method="get" class="row g-2 align-items-center mb-3">
+    <div class="col-md-4">
+        <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Cari NIK atau nama pekerja">
+    </div>
+    <div class="col-auto">
+        <button class="btn btn-primary" type="submit"><i class="bi bi-search"></i> Cari</button>
+        {% if q %}<a href="{% url 'biodata:mutasi' %}" class="btn btn-link">Reset</a>{% endif %}
+    </div>
+    <div class="col-auto ms-auto d-flex align-items-center gap-3">
+        <span class="text-muted">{{ total }} data</span>
+        {% if perms.biodata.tambah_mutasi %}
+        <a href="{% url 'biodata:mutasi_tambah' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle-fill"></i> Tambah
+        </a>
+        {% endif %}
+    </div>
+</form>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-sm table-striped table-hover align-middle mb-0">
+            <thead class="table-dark">
+                <tr>
+                    <th>NIK</th><th>Nama</th><th>Jenis</th><th>Tanggal</th>
+                    <th>Site tujuan</th><th>Alasan</th><th>Sisa cuti</th><th>Keterangan</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for r in rows %}
+                <tr>
+                    <td>{{ r.NIK_STAFF }}</td>
+                    <td>{{ r.EMPNAME|default_if_none:"" }}</td>
+                    <td>{{ r.JENIS }}</td>
+                    <td>{{ r.TGL }}</td>
+                    <td>{{ r.SITE_TUJUAN|default:"-" }}</td>
+                    <td>{{ r.TERM_TYPE_ID|default_if_none:"-" }}</td>
+                    <td>{{ r.CUTI|default_if_none:"-" }}</td>
+                    <td title="{{ r.REASON_OF_RESIGN|default_if_none:'' }}">{{ r.REASON_OF_RESIGN|default_if_none:""|truncatechars:50 }}</td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="8" class="text-center text-muted py-4">Tidak ada data.</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<nav class="d-flex justify-content-between align-items-center mt-3">
+    <span class="text-muted small">Halaman {{ page }} dari {{ pages }}</span>
+    <div>
+        {% if page > 1 %}<a class="btn btn-outline-secondary btn-sm" href="?q={{ q|urlencode }}&page={{ prev }}">&laquo; Sebelumnya</a>{% endif %}
+        {% if page < pages %}<a class="btn btn-outline-secondary btn-sm" href="?q={{ q|urlencode }}&page={{ next }}">Berikutnya &raquo;</a>{% endif %}
+    </div>
+</nav>
+{% endif %}
+{% endblock %}

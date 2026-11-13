@@ -1,6 +1,20 @@
 {% extends 'base.html' %}
-{% block title %}Home{% endblock %}
+{% block title %}Dashboard{% endblock %}
+{% block judul %}Dashboard{% endblock %}
+{% block crumb %}Dashboard{% endblock %}
+
 {% block content %}
-<h4>Selamat datang, {{ user.username }}</h4>
-<p class="text-muted">Pilih menu Payroll &rarr; Biodata di sidebar untuk melihat atau menambah data pekerja.</p>
+<div class="card">
+    <div class="card-body">
+        <h5 class="mb-1">Selamat datang, {{ user.username }}</h5>
+        <p class="text-muted mb-3">
+            Anda bekerja di perusahaan
+            <b>{{ request.session.comp_name|default:request.session.comp_id }}</b>
+            dan site <b>{{ request.session.site_name|default:request.session.site_id }}</b>.
+        </p>
+        {% comment %} <a href="{% url 'biodata:list' %}" class="btn btn-primary btn-sm">
+            <i class="bi bi-people-fill"></i> Buka Biodata
+        </a> {% endcomment %}
+    </div>
+</div>
 {% endblock %}

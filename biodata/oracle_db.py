@@ -6,7 +6,8 @@ from contextlib import contextmanager
 import cx_Oracle
 from dotenv import load_dotenv
 
-load_dotenv()
+# buat .env selalu menang. Di biodata/oracle_db.py,
+load_dotenv(override=True)
 
 _initialized = False
 
@@ -35,6 +36,31 @@ def _view_name():
     return name
 
 VIEW_COMPSITE = _view_name()
+
+def _taxstatus_name():
+    name = (os.getenv("ORA_TABLE_TAXSTATUS") or "HR_HIST_TAX_STATUS").strip()
+    if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_$#]*(\.[A-Za-z][A-Za-z0-9_$#]*)?", name):
+        raise ValueError(f"Nama tabel tax status di .env tidak valid: {name!r}")
+    return name
+
+TABLE_TAXSTATUS = _taxstatus_name()
+
+def _nama_objek(var_env, bawaan):
+    name = (os.getenv(var_env) or bawaan).strip()
+    if not re.fullmatch(r"[A-Za-z][A-Za-z0-9_$#]*(\.[A-Za-z][A-Za-z0-9_$#]*)?", name):
+        raise ValueError(f"Nilai {var_env} di .env tidak valid: {name!r}")
+    return name
+
+TABLE_KARIER = _nama_objek("ORA_TABLE_KARIER", "HR_HIST_STAFF")
+TABLE_JOBSPEC = _nama_objek("ORA_TABLE_JOBSPEC", "JOBSPECIFICATION")
+
+def _nama_opsional(var_env):
+    name = (os.getenv(var_env) or "").strip()
+    if name and not re.fullmatch(r"[A-Za-z][A-Za-z0-9_$#]*(\.[A-Za-z][A-Za-z0-9_$#]*)?", name):
+        raise ValueError(f"Nilai {var_env} di .env tidak valid: {name!r}")
+    return name
+
+TABLE_MUTASI = _nama_opsional("ORA_TABLE_MUTASI")
     
 # membuka koneksi lalu menutupnya otomatis (finally), walaupun terjadi error. Setiap permintaan halaman membuka koneksi baru. Ini sederhana dan cukup untuk pemakaian internal. Kalau nanti pengguna banyak, bisa diganti connection pool.
 @contextmanager
